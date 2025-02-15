@@ -1,4 +1,7 @@
 const fs = require("node:fs");
+const http = require("http");
+const url = require("url");
+const path = require("node:path");
 
 ////////////////////////////////
 // files
@@ -25,4 +28,30 @@ const fs = require("node:fs");
 // });
 
 ////////////////////////////////
-//
+// server
+const server = http.createServer((req, res) => {
+	const pathName = req.url;
+
+	if (pathName === "/overview" || pathName === "/") {
+		res.end("Overview");
+	} else if (pathName === "/product") {
+		res.end("product");
+	} else if (pathName === "/api") {
+		fs.readFile(`${__dirname}/dev-data/data.json`, "utf-8", (err, data) => {
+			const productData = JSON.parse(data);
+			res.writeHead(200, { "Content-type": "application/json" });
+			res.end(data);
+		});
+	} else {
+		res.writeHead(404, {
+			"Content-type": "text/html",
+			"my-own-header": "hello, header",
+		});
+		res.end("<h1>404<h1/>");
+	}
+});
+
+// listen to incoming requests
+server.listen(8000, "127.0.0.1", () => {
+	console.log("listening to requests on port 8000");
+});
