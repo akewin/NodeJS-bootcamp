@@ -99,7 +99,7 @@ const server = http.createServer((req, res) => {
 	}
 });
 
-// listen to incoming requests
+// listen to incoming request
 server.listen(8000, "127.0.0.1", () => {
 	console.log("listening to requests on port 8000");
 });
