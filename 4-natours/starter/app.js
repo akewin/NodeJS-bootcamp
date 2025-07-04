@@ -32,10 +32,15 @@ app.post("/api/v1/tours", (req, res) => {
 	fs.writeFile(
 		`${__dirname}/dev-data/data/tours-simple.json`,
 		JSON.stringify(tours),
-		(err) => {},
+		(err) => {
+			res.status(201).json({
+				status: "success",
+				data: {
+					tour: newTour,
+				},
+			});
+		},
 	);
-
-	res.send("done.");
 });
 
 app.listen(port, () => {
