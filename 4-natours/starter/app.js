@@ -12,17 +12,16 @@ const tours = JSON.parse(
 	fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`),
 );
 
-// enveloping json from file and sending back
-app.get("/api/v1/tours", (req, res) => {
+// REFACTORING ROUTES
+const getAllTours = (req, res) => {
 	res.status(200).json({
 		status: "success",
 		results: tours.length,
 		data: { tours },
 	});
-});
+};
 
-// :id is a new variable to this url
-app.get("/api/v1/tours/:id", (req, res) => {
+const getTour = (req, res) => {
 	// console.log(req.params)
 
 	// if we had more parameters of even optinal parameters;
@@ -48,9 +47,9 @@ app.get("/api/v1/tours/:id", (req, res) => {
 			tour,
 		},
 	});
-});
+};
 
-app.delete("api/v1/tours/:id", (req, res) => {
+const deleteTour = (req, res) => {
 	if (req.params.id * 1 > tours.length) {
 		return res.status(404).json({
 			status: "fail",
@@ -62,10 +61,9 @@ app.delete("api/v1/tours/:id", (req, res) => {
 		status: "success",
 		data: null,
 	});
-});
+};
 
-// the post route
-app.post("/api/v1/tours", (req, res) => {
+const createTour = (req, res) => {
 	// console.log(req.body);
 
 	const newId = tours[tours.length - 1].id + 1;
@@ -85,7 +83,31 @@ app.post("/api/v1/tours", (req, res) => {
 			});
 		},
 	);
-});
+};
+
+const updateTour = (req, res) => {
+	if (req.params.id * 1 > tours.length) {
+		return res.status(404).json({
+			status: "fail",
+			message: "Invalid ID",
+		});
+	}
+
+	res.status(200).json({
+		status: "success",
+		data: {
+			tour: "<updated tour here>",
+		},
+	});
+};
+
+// enveloping json from file and sending back
+// app.get("/api/v1/tours", getAllTours);
+// app.post("/api/v1/tours", createTour);
+// :id is a new variable to this url
+app.get("/api/v1/tours/:id", getTour);
+app.delete("api/v1/tours/:id", deleteTour);
+app.patch("/api/v1/tour/:id", updateTour);
 
 app.listen(port, () => {
 	console.log(`App running on port ${port}`);
