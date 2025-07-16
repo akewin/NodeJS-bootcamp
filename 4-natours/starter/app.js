@@ -7,6 +7,12 @@ const port = 3334;
 // middleware to post in json
 app.use(express.json());
 
+// our made middleware
+app.use((req, res, next) => {
+	req.requestTime = new Date().toISOString();
+	next();
+})
+
 //reading tour data
 const tours = JSON.parse(
 	fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`),
@@ -16,6 +22,7 @@ const tours = JSON.parse(
 const getAllTours = (req, res) => {
 	res.status(200).json({
 		status: "success",
+		req.requestTime,
 		results: tours.length,
 		data: { tours },
 	});
@@ -105,10 +112,12 @@ const updateTour = (req, res) => {
 // app.get("/api/v1/tours", getAllTours);
 // app.post("/api/v1/tours", createTour);
 // :id is a new variable to this url
-app.get("/api/v1/tours/:id", getTour);
-app.delete("api/v1/tours/:id", deleteTour);
-app.patch("/api/v1/tour/:id", updateTour);
+// app.get("/api/v1/tours/:id", getTour);
+// app.delete("api/v1/tours/:id", deleteTour);
+// app.patch("/api/v1/tour/:id", updateTour);
 
+app.route("/api/v1/tours").get(getAllTours).post(createTour);
+app.rout("api/v1/tours/:id").get(getTour).delete(deleteTour).patch(updateTour);
 app.listen(port, () => {
 	console.log(`App running on port ${port}`);
 });
